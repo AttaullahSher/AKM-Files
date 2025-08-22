@@ -6,13 +6,12 @@
     <title>AKM Docs - Welcome</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Additional styles for the welcome page */
-        body { display: flex; align-items: center; justify-content: center; text-align: center; }
-        .welcome-container { background: var(--white); padding: 40px; border-radius: 12px; box-shadow: var(--shadow); }
+        body { display: flex; align-items: center; justify-content: center; text-align: center; height: 100vh; }
+        .welcome-container { background: var(--white); padding: 40px 50px; border-radius: 12px; box-shadow: var(--shadow); }
         .welcome-container h1 { font-size: 32px; margin-bottom: 10px; color: var(--invoice-blue); }
         .welcome-container p { margin-bottom: 30px; color: #555; }
+        .action-buttons a { display: block; text-decoration: none; }
         .action-buttons button {
-            display: block;
             width: 100%;
             padding: 15px;
             margin-bottom: 15px;
@@ -35,17 +34,10 @@
         <h1>Welcome to AKM Docs</h1>
         <p>Your simple solution for creating and managing documents.</p>
         <div class="action-buttons">
-            <button id="btn-invoice" onclick="createNew('invoice')">Create New Invoice</button>
-            <button id="btn-quotation" onclick="createNew('quotation')">Create New Quotation</button>
-            <button id="btn-delivery" onclick="createNew('delivery')">Create New Delivery Note</button>
+            <a href="invoice.html"><button id="btn-invoice">Create New Invoice</button></a>
+            <a href="quotation.html"><button id="btn-quotation">Create New Quotation</button></a>
+            <a href="delivery.html"><button id="btn-delivery">Create New Delivery Note</button></a>
         </div>
-        </div>
-
-    <script>
-        function createNew(docType) {
-            // This will open the editor page and tell it which document to show
-            window.location.href = `editor.html?doc=${docType}`;
-        }
-    </script>
+    </div>
 </body>
 </html>

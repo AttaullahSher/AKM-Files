@@ -1,62 +1,120 @@
-// This is your live Web App URL.
 const WEB_APP_URL = 'https://script.google.com/a/macros/akm-music.com/s/AKfycbwZHuhkk8-llpul4ybaCnxvl_EdRcoeaHoxwrELZu53zBWV_wY2--YsPWCrENMKMC3kJg/exec';
-
-let currentDoc = 'invoice';
 const NUM_ROWS = 14;
 
-// --- INITIALIZATION ---
 window.onload = function() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const docToShow = urlParams.get('doc') || 'invoice'; 
+    const docType = document.body.dataset.docType;
+    if (!docType) return; // Don't run on index.html
 
-  generateTableRows();
-  showDocument(docToShow); // This is the fix!
-  addEventListeners();
+    generateTableRows(docType);
+    initializePage(docType);
+    document.querySelector('.print-btn').addEventListener('click', () => saveAndPrint(docType));
 };
 
-function addEventListeners() {
-  document.querySelector('.print-btn').addEventListener('click', saveAndPrint);
-  document.querySelectorAll('.doc-tab').forEach(tab => {
-    tab.addEventListener('click', (e) => showDocument(e.target.id.replace('tab-', '')));
-  });
+function initializePage(docType) {
+    document.getElementById(`${docType}-number`).value = generateNumber(docType);
+    document.getElementById(`${docType}-date`).value = new Date().toISOString().split('T')[0];
 }
 
-function generateTableRows() {
-    const invoiceBody = document.getElementById('invoice-items');
-    const quotationBody = document.getElementById('quotation-items');
-    const deliveryBody = document.getElementById('delivery-items');
+function generateTableRows(docType) {
+    const tableBody = document.getElementById('items-body');
+    let rowsHtml = '';
     for (let i = 1; i <= NUM_ROWS; i++) {
-        invoiceBody.innerHTML += `<tr><td>${i}</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty" class="qty" oninput="updateLineTotal(this, 'invoice')"></td><td><input type="number" data-cell="price" class="price" oninput="updateLineTotal(this, 'invoice')"></td><td><span class="line-total"></span></td></tr>`;
-        quotationBody.innerHTML += `<tr><td>${i}</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty" class="qty" oninput="updateLineTotal(this, 'quotation')"></td><td><input type="number" data-cell="price" class="price" oninput="updateLineTotal(this, 'quotation')"></td><td><span class="line-total"></span></td></tr>`;
-        deliveryBody.innerHTML += `<tr><td>${i}</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered" class="qty-ordered" oninput="updateDeliveryTotals()"></td><td><input type="number" data-cell="qty-delivered" class="qty-delivered" oninput="updateDeliveryTotals()"></td></tr>`;
+        if (docType === 'delivery') {
+            rowsHtml += `<tr><td>${i}</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered" class="qty-ordered"></td><td><input type="number" data-cell="qty-delivered" class="qty-delivered"></td></tr>`;
+        } else {
+            rowsHtml += `<tr><td>${i}</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty" class="qty"></td><td><input type="number" data-cell="price" class="price"></td><td><span class="line-total"></span></td></tr>`;
+        }
+    }
+    tableBody.innerHTML = rowsHtml;
+
+    // Add event listeners after rows are created
+    tableBody.querySelectorAll('input').forEach(input => {
+        input.addEventListener('input', () => updateTotals(docType));
+    });
+}
+
+function updateTotals(docType) {
+    if (docType === 'delivery') {
+        let orderedTotal = 0, deliveredTotal = 0;
+        document.querySelectorAll('.qty-ordered').forEach(input => orderedTotal += Number(input.value) || 0);
+        document.querySelectorAll('.qty-delivered').forEach(input => deliveredTotal += Number(input.value) || 0);
+        document.getElementById('delivery-ordered-total').textContent = orderedTotal;
+        document.getElementById('delivery-delivered-total').textContent = deliveredTotal;
+    } else {
+        let subtotal = 0;
+        document.querySelectorAll('#items-body tr').forEach(row => {
+            const qty = Number(row.querySelector('.qty')?.value) || 0;
+            const price = Number(row.querySelector('.price')?.value) || 0;
+            const total = qty * price;
+            row.querySelector('.line-total').textContent = total > 0 ? total.toFixed(2) : '';
+            subtotal += total;
+        });
+        const vat = subtotal * 0.05;
+        const grandTotal = subtotal + vat;
+        document.getElementById('subtotal-value').textContent = subtotal.toFixed(2);
+        document.getElementById('vat-value').textContent = vat.toFixed(2);
+        document.getElementById('total-value').textContent = grandTotal.toFixed(2);
+        document.getElementById(`${docType}-words`).textContent = numberToWords(grandTotal);
     }
 }
 
-// --- DOCUMENT DISPLAY & LOGIC (FIXED!) ---
-function showDocument(doc) {
-  currentDoc = doc;
-  // Hide all documents by removing the 'active' class
-  document.querySelectorAll('.document').forEach(d => d.classList.remove('active'));
-  // Show the correct document by adding the 'active' class
-  document.getElementById(doc).classList.add('active');
-  
-  // Update the active tab button style
-  document.querySelectorAll('.doc-tab').forEach(t => t.classList.remove('active-tab'));
-  document.getElementById(`tab-${doc}`).classList.add('active-tab');
+function saveAndPrint(docType) {
+    const docElement = document.querySelector('.document.active');
+    const docData = {
+        sheetName: docType.charAt(0).toUpperCase() + docType.slice(1) + 's',
+        customerDetails: {
+            name: docElement.querySelector('[data-cell="name"]').value,
+            mobile: docElement.querySelector('[data-cell="mobile"]').value,
+            add: docElement.querySelector('[data-cell="add"]').value,
+            trn: docElement.querySelector('[data-cell="trn"]').value,
+        },
+        docDetails: {
+            number: docElement.querySelector(`#${docType}-number`).value,
+            date: docElement.querySelector(`#${docType}-date`).value,
+            ref: docElement.querySelector(`#${docType}-ref`) ? docElement.querySelector(`#${docType}-ref`).value : '',
+        },
+        items: [],
+        totals: {
+            subtotal: document.getElementById('subtotal-value')?.textContent || "0",
+            vat: document.getElementById('vat-value')?.textContent || "0",
+            total: document.getElementById('total-value')?.textContent || "0",
+        },
+        notes: docElement.querySelector('.notes-section textarea').value
+    };
+    
+    document.querySelectorAll('#items-body tr').forEach(row => {
+        const item = {};
+        row.querySelectorAll('input').forEach(input => {
+            if (input.dataset.cell) item[input.dataset.cell] = input.value;
+        });
+        if (Object.values(item).some(val => val)) docData.items.push(item);
+    });
 
-  // Set default values if they are empty
-  const numberInput = document.getElementById(`${doc}-number`);
-  if (!numberInput.value) { numberInput.value = generateNumber(doc); }
-  const dateInput = document.getElementById(`${doc}-date`);
-  if (!dateInput.value) { dateInput.value = new Date().toISOString().split('T')[0]; }
+    const printButton = document.querySelector('.print-btn');
+    printButton.disabled = true;
+    printButton.innerHTML = '...';
 
-  // Show/hide the "Create from..." buttons
-  document.getElementById('create-invoice-btn').style.display = doc === 'quotation' ? 'flex' : 'none';
-  document.getElementById('create-delivery-btn').style.display = doc === 'invoice' ? 'flex' : 'none';
-  
-  updateTotals(doc);
+    fetch(WEB_APP_URL, {
+        method: 'POST', mode: 'cors', cache: 'no-cache', redirect: 'follow', body: JSON.stringify(docData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            alert(data.message);
+            window.print();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('A critical error occurred.');
+    })
+    .finally(() => {
+        printButton.disabled = false;
+        printButton.innerHTML = `<img src="Assets/printer-icon.avif" alt="Print" style="width: 20px; height: 20px;"/>`;
+    });
 }
-
 
 function generateNumber(docType) {
     const date = new Date();
@@ -71,88 +129,25 @@ function generateNumber(docType) {
     return `${year}${month}${day}${typeDigit}${sequenceStr}`;
 }
 
-// --- DATA HANDLING AND SAVING (No changes here, it should work now) ---
-function saveAndPrint() {
-  const docElement = document.getElementById(currentDoc);
-  let grandTotal = 0;
-  if (currentDoc !== 'delivery') {
-      grandTotal = parseFloat(docElement.querySelector(`#${currentDoc}-total-value`).textContent) || 0;
+function numberToWords(num) {
+  if (num === 0 || !num) return '';
+  const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+  const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+  const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+  let words = ''; let integer = Math.floor(num); let decimal = Math.round((num - integer) * 100);
+  function convertChunk(n) {
+    let str = '';
+    if (n >= 100) { str += ones[Math.floor(n / 100)] + ' Hundred'; n %= 100; if (n > 0) str += ' and '; }
+    if (n >= 20) { str += tens[Math.floor(n / 10)]; n %= 10; if (n > 0) str += ' ' + ones[n]; } 
+    else if (n >= 10) { str += teens[n - 10]; } 
+    else if (n > 0) { str += ones[n]; }
+    return str;
   }
-  if (grandTotal <= 0 && currentDoc !== 'delivery') {
-      if (!confirm('Totals are empty. Save and Print anyway?')) { return; }
+  if (integer === 0) { words = 'Zero'; }
+  else {
+    words = convertChunk(integer);
   }
-  const docData = {
-      sheetName: currentDoc.charAt(0).toUpperCase() + currentDoc.slice(1) + 's',
-      customerDetails: {
-          name: docElement.querySelector('input[data-cell="name"]').value,
-          mobile: docElement.querySelector('input[data-cell="mobile"]').value,
-          add: docElement.querySelector('input[data-cell="add"]').value,
-          trn: docElement.querySelector('input[data-cell="trn"]').value
-      },
-      docDetails: {
-          number: docElement.querySelector(`#${currentDoc}-number`).value,
-          date: docElement.querySelector(`#${currentDoc}-date`).value,
-          ref: docElement.querySelector(`#${currentDoc}-ref`) ? docElement.querySelector(`#${currentDoc}-ref`).value : ''
-      },
-      items: [],
-      totals: {
-          subtotal: docElement.querySelector(`#${currentDoc}-subtotal-value`) ? docElement.querySelector(`#${currentDoc}-subtotal-value`).textContent : "0",
-          vat: docElement.querySelector(`#${currentDoc}-vat-value`) ? docElement.querySelector(`#${currentDoc}-vat-value`).textContent : "0",
-          total: grandTotal.toString(),
-      },
-      notes: docElement.querySelector('.notes-section textarea').value
-  };
-  docElement.querySelectorAll(`#${currentDoc}-items tr`).forEach(row => {
-      const item = {};
-      row.querySelectorAll('input[data-cell]').forEach(input => { item[input.dataset.cell] = input.value; });
-      if (Object.values(item).some(val => val)) { docData.items.push(item); }
-  });
-  const printButton = document.querySelector('.print-btn');
-  printButton.disabled = true;
-  printButton.innerHTML = '...';
-  fetch(WEB_APP_URL, {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      redirect: 'follow',
-      body: JSON.stringify(docData),
-  })
-  .then(response => response.json())
-  .then(data => {
-      if(data.status === 'success') {
-          alert(data.message);
-          triggerPrintAndReset(currentDoc);
-      } else {
-          alert('Error saving record: ' + data.message);
-      }
-  })
-  .catch(error => {
-      console.error('Error sending data:', error);
-      alert('A critical error occurred. Please try again.');
-  })
-  .finally(() => {
-    printButton.disabled = false;
-    printButton.innerHTML = `<img src="Assets/printer-icon.avif" alt="Print" style="width: 20px; height: 20px;"/>`;
-  });
+  let result = words.trim() + ' Dirhams';
+  if (decimal > 0) { result += ' and ' + (convertChunk(decimal) || '') + ' Fils'; }
+  return result.trim() + ' only.';
 }
-
-function triggerPrintAndReset(docType) {
-    document.title = document.getElementById(`${docType}-number`).value;
-    setTimeout(() => {
-        window.print();
-        resetDocument(docType);
-        document.title = "AKM Document Editor";
-    }, 100);
-}
-
-function resetDocument(doc) {
-  const docElement = document.getElementById(doc);
-  docElement.querySelectorAll('input, textarea').forEach(input => {
-    if(input.dataset.cell !== 'name' && input.dataset.cell !== 'add') {
-      input.value = '';
-    }
-  });
-  docElement.querySelector('input[data-cell="name"]').value = 'Purchasing';
-  docElement.querySelector('input[data-cell="add"]').value = 'Abudhabi UAE';
-  docElement.querySelector(`#${doc}-date`).value = new Date().toISOString().split('T')[0];
-  docElement.querySelector(`#${
