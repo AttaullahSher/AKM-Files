@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice Editor</title>
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Editor</title><link rel="stylesheet" href="styles.css">
 </head>
 <body data-doc-type="invoice">
     <div class="app-container">
-        <header class="header-bar no-print">
-            <a href="index.html"><button>Home</button></a>
-        </header>
+        <header class="header-bar no-print"><div class="header-left"><a href="index.html"><button>Home</button></a></div></header>
         <main class="main-content">
-            <button class="print-btn no-print" title="Save and Print"><img src="Assets/printer-icon.avif" alt="Print" style="width: 20px; height: 20px;"/></button>
+            <button class="print-btn no-print" title="Save and Print"><img src="Assets/printer-icon.avif" alt="Print"></button>
             <div id="invoice" class="document active">
                  <div class="header"> <div class="logo"><img src="Assets/Logo.jpg" alt="AKM Logo"></div> <div class="company-details"><div class="company-name" style="color: var(--invoice-blue);">AKM MUSIC</div> <div>Ajmal Khan Mohammed Music Centre LLC</div> <div>TRN # 100241997400003</div></div></div>
                  <div class="details"><div class="customer-details"><div><label>Name:</label><input type="text" data-cell="name" value="Purchasing"></div><div><label>Mobile:</label><input type="text" data-cell="mobile"></div><div><label>Add:</label><input type="text" value="Abudhabi UAE" data-cell="add"></div><div><label>TRN:</label><input type="text" data-cell="trn"></div></div><div class="invoice-details"><div><label>Inv #:</label><input type="text" id="invoice-number" readonly></div><div><label>Date:</label><input type="date" id="invoice-date"></div><div><label>Ref #:</label><input type="text" id="invoice-ref"></div></div></div>
                  <h2 style="color: var(--invoice-blue);">TAX INVOICE</h2>
-                 <table class="items-table"><thead><tr><th>SN</th><th>Model</th><th>Description</th><th>Qty</th><th>Unit Price</th><th>Line Total</th></tr></thead><tbody id="items-body"></tbody><tfoot><tr><td colspan="4"><span>Total in AED: </span><span class="total-in-words" id="invoice-words"></span></td><td style="text-align: right;">Subtotal:</td><td style="font-weight: bold;"><span id="subtotal-value"></span></td></tr><tr><td colspan="4"></td><td style="text-align: right;">5% VAT:</td><td style="font-weight: bold;"><span id="vat-value"></span></td></tr><tr><td colspan="4"></td><td style="text-align: right;">G. Total:</td><td style="font-weight: bold;"><span id="total-value"></span></td></tr></tfoot></table>
+                 <table class="items-table"><thead><tr><th>SN</th><th>Model</th><th>Description</th><th>Qty</th><th>Unit Price</th><th>Line Total</th></tr></thead><tbody id="items-body"></tbody><tfoot><tr><td colspan="4" rowspan="3"><span class="total-in-words" id="invoice-words"></span></td><td style="text-align: right;">Subtotal:</td><td style="font-weight: bold; text-align: right;"><span id="subtotal-value"></span></td></tr><tr><td style="text-align: right;">5% VAT:</td><td style="font-weight: bold; text-align: right;"><span id="vat-value"></span></td></tr><tr><td style="text-align: right;">G. Total:</td><td style="font-weight: bold; text-align: right;"><span id="total-value"></span></td></tr></tfoot></table>
                  <div class="notes-section"><label>Notes:</label><textarea aria-label="Notes"></textarea></div>
                  <div class="account-details"><strong>Payment Terms:</strong> We accept payments via Cash, Card, Bank Transfer, and Cheque.<br>• Title: AKM Music Centre LLC • A/c#: 1011476042801 • IBAN: AE860260001011476042801</div>
                  <div class="signatures"><div class="signatory authorized"><img src="Assets/Sign.jpeg" alt="Authorized Signature">Authorized Signatory</div></div>

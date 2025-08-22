@@ -1,9 +1,11 @@
 const WEB_APP_URL = 'https://script.google.com/a/macros/akm-music.com/s/AKfycbwZHuhkk8-llpul4ybaCnxvl_EdRcoeaHoxwrELZu53zBWV_wY2--YsPWCrENMKMC3kJg/exec';
 const NUM_ROWS = 14;
 
+// --- INITIALIZATION ---
 window.onload = function() {
+    // Find out what kind of page this is from the <body> tag
     const docType = document.body.dataset.docType;
-    if (!docType) return; // Don't run on index.html
+    if (!docType) return; // Stop if it's not a document page (like index.html)
 
     generateTableRows(docType);
     initializePage(docType);
@@ -20,14 +22,13 @@ function generateTableRows(docType) {
     let rowsHtml = '';
     for (let i = 1; i <= NUM_ROWS; i++) {
         if (docType === 'delivery') {
-            rowsHtml += `<tr><td>${i}</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered" class="qty-ordered"></td><td><input type="number" data-cell="qty-delivered" class="qty-delivered"></td></tr>`;
+            rowsHtml += `<tr><td>${i}</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>`;
         } else {
-            rowsHtml += `<tr><td>${i}</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty" class="qty"></td><td><input type="number" data-cell="price" class="price"></td><td><span class="line-total"></span></td></tr>`;
+            rowsHtml += `<tr><td>${i}</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty"></td><td><input type="number" data-cell="price"></td><td><span class="line-total"></span></td></tr>`;
         }
     }
     tableBody.innerHTML = rowsHtml;
-
-    // Add event listeners after rows are created
+    // Add event listeners to the new input fields
     tableBody.querySelectorAll('input').forEach(input => {
         input.addEventListener('input', () => updateTotals(docType));
     });
@@ -36,15 +37,15 @@ function generateTableRows(docType) {
 function updateTotals(docType) {
     if (docType === 'delivery') {
         let orderedTotal = 0, deliveredTotal = 0;
-        document.querySelectorAll('.qty-ordered').forEach(input => orderedTotal += Number(input.value) || 0);
-        document.querySelectorAll('.qty-delivered').forEach(input => deliveredTotal += Number(input.value) || 0);
+        document.querySelectorAll('[data-cell="qty-ordered"]').forEach(i => orderedTotal += Number(i.value) || 0);
+        document.querySelectorAll('[data-cell="qty-delivered"]').forEach(i => deliveredTotal += Number(i.value) || 0);
         document.getElementById('delivery-ordered-total').textContent = orderedTotal;
         document.getElementById('delivery-delivered-total').textContent = deliveredTotal;
     } else {
         let subtotal = 0;
         document.querySelectorAll('#items-body tr').forEach(row => {
-            const qty = Number(row.querySelector('.qty')?.value) || 0;
-            const price = Number(row.querySelector('.price')?.value) || 0;
+            const qty = Number(row.querySelector('[data-cell="qty"]')?.value) || 0;
+            const price = Number(row.querySelector('[data-cell="price"]')?.value) || 0;
             const total = qty * price;
             row.querySelector('.line-total').textContent = total > 0 ? total.toFixed(2) : '';
             subtotal += total;
@@ -58,8 +59,10 @@ function updateTotals(docType) {
     }
 }
 
+// --- DATA HANDLING AND SAVING ---
 function saveAndPrint(docType) {
     const docElement = document.querySelector('.document.active');
+    // ... (The rest of the saveAndPrint, generateNumber, and numberToWords functions are the same)
     const docData = {
         sheetName: docType.charAt(0).toUpperCase() + docType.slice(1) + 's',
         customerDetails: {
@@ -81,13 +84,14 @@ function saveAndPrint(docType) {
         },
         notes: docElement.querySelector('.notes-section textarea').value
     };
-    
     document.querySelectorAll('#items-body tr').forEach(row => {
         const item = {};
-        row.querySelectorAll('input').forEach(input => {
-            if (input.dataset.cell) item[input.dataset.cell] = input.value;
+        row.querySelectorAll('input[data-cell]').forEach(input => {
+            item[input.dataset.cell] = input.value;
         });
-        if (Object.values(item).some(val => val)) docData.items.push(item);
+        if (Object.values(item).some(val => val)) {
+            docData.items.push(item);
+        }
     });
 
     const printButton = document.querySelector('.print-btn');
@@ -112,7 +116,7 @@ function saveAndPrint(docType) {
     })
     .finally(() => {
         printButton.disabled = false;
-        printButton.innerHTML = `<img src="Assets/printer-icon.avif" alt="Print" style="width: 20px; height: 20px;"/>`;
+        printButton.innerHTML = `<img src="Assets/printer-icon.avif" alt="Print" style="width: 20px; height: 20px;">`;
     });
 }
 
@@ -128,7 +132,6 @@ function generateNumber(docType) {
     const sequenceStr = String(sequence).padStart(3, '0');
     return `${year}${month}${day}${typeDigit}${sequenceStr}`;
 }
-
 function numberToWords(num) {
   if (num === 0 || !num) return '';
   const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
@@ -145,9 +148,20 @@ function numberToWords(num) {
   }
   if (integer === 0) { words = 'Zero'; }
   else {
-    words = convertChunk(integer);
+    let tempInt = integer;
+    let chunkCount = 0;
+    while (tempInt > 0) {
+        const chunk = tempInt % 1000;
+        if (chunk > 0) {
+            let chunkWords = convertChunk(chunk);
+            if(chunkCount > 0) chunkWords += ' ' + (['', 'Thousand', 'Million'][chunkCount] || '');
+            words = chunkWords + ' ' + words;
+        }
+        tempInt = Math.floor(tempInt / 1000);
+        chunkCount++;
+    }
   }
   let result = words.trim() + ' Dirhams';
-  if (decimal > 0) { result += ' and ' + (convertChunk(decimal) || '') + ' Fils'; }
+  if (decimal > 0) { result += ' and ' + convertChunk(decimal) + ' Fils'; }
   return result.trim() + ' only.';
 }
