@@ -8,22 +8,24 @@
 </head>
 <body>
   <div class="app-container">
-    <div class="header-bar no-print">
+    <header class="header-bar no-print">
       <div class="header-left">
         <a href="index.html" style="text-decoration: none;"><button>Home</button></a>
-        <button id="create-invoice-btn" onclick="createInvoiceFromQuotation()" style="display:none;">Create Invoice</button>
-        <button id="create-delivery-btn" onclick="createDeliveryFromInvoice()" style="display:none;">Create Delivery</button>
+        <button id="create-invoice-btn" onclick="createInvoiceFromQuotation()">Create Invoice</button>
+        <button id="create-delivery-btn" onclick="createDeliveryFromInvoice()">Create Delivery</button>
       </div>
       <div class="header-right">
         <button id="tab-invoice" class="doc-tab" onclick="showDocument('invoice')">Invoice</button>
         <button id="tab-quotation" class="doc-tab" onclick="showDocument('quotation')">Quotation</button>
         <button id="tab-delivery" class="doc-tab" onclick="showDocument('delivery')">Delivery Note</button>
       </div>
-    </div>
-    <button class="print-btn no-print" title="Save and Print">
-      <img src="Assets/printer-icon.avif" alt="Print"/>
-    </button>
-    <div class="main-content">
+    </header>
+    
+    <main class="main-content">
+      <button class="print-btn no-print" title="Save and Print">
+        <img src="Assets/printer-icon.avif" alt="Print" style="width: 20px; height: 20px;"/>
+      </button>
+
       <div id="invoice" class="document">
         <div class="header" style="border-color: var(--invoice-blue);">
             <div class="logo"><img src="Assets/Logo.jpg" alt="AKM Music Logo"></div>
@@ -51,9 +53,9 @@
             <thead><tr><th>SN</th><th>Model</th><th>Description</th><th>Qty</th><th>Unit Price</th><th>Line Total</th></tr></thead>
             <tbody id="invoice-items"></tbody>
             <tfoot>
-                <tr><td colspan="3" rowspan="3" style="vertical-align: top;"><span class="total-in-words" id="invoice-words"></span></td><td>Subtotal:</td><td colspan="2"><span id="invoice-subtotal-value"></span></td></tr>
-                <tr><td>5% VAT:</td><td colspan="2"><span id="invoice-vat-value"></span></td></tr>
-                <tr><td>G. Total:</td><td colspan="2"><span id="invoice-total-value"></span></td></tr>
+                <tr><td colspan="4"><span>Total in AED: </span><span id="invoice-words" class="total-in-words"></span></td><td style="text-align: right;">Subtotal:</td><td style="font-weight: bold;"><span id="invoice-subtotal-value"></span></td></tr>
+                <tr><td colspan="4"></td><td style="text-align: right;">5% VAT:</td><td style="font-weight: bold;"><span id="invoice-vat-value"></span></td></tr>
+                <tr><td colspan="4"></td><td style="text-align: right;">G. Total:</td><td style="font-weight: bold;"><span id="invoice-total-value"></span></td></tr>
             </tfoot>
         </table>
         <div class="notes-section"><label>Notes:</label><textarea></textarea></div>
@@ -61,6 +63,7 @@
         <div class="signatures"><div class="signatory authorized"><img src="Assets/Sign.jpeg" alt="Authorized Signature">Authorized Signatory</div></div>
         <div class="footer" style="border-color: var(--invoice-blue);">+971 (02) 621 9929 | sales@akm-music.com | PO Box 8227, E3-02, Abu Dhabi, UAE</div>
       </div>
+
       <div id="quotation" class="document">
          <div class="header" style="border-color: var(--quotation-green);">
             <div class="logo"><img src="Assets/Logo.jpg" alt="AKM Music Logo"></div>
@@ -84,9 +87,9 @@
             <thead><tr><th>SN</th><th>Model</th><th>Description</th><th>Qty</th><th>Unit Price</th><th>Line Total</th></tr></thead>
             <tbody id="quotation-items"></tbody>
             <tfoot>
-                <tr><td colspan="3" rowspan="3" style="vertical-align: top;"><span class="total-in-words" id="quotation-words"></span></td><td>Subtotal:</td><td colspan="2"><span id="quotation-subtotal-value"></span></td></tr>
-                <tr><td>5% VAT:</td><td colspan="2"><span id="quotation-vat-value"></span></td></tr>
-                <tr><td>G. Total:</td><td colspan="2"><span id="quotation-total-value"></span></td></tr>
+                <tr><td colspan="4"><span>Total in AED: </span><span id="quotation-words" class="total-in-words"></span></td><td style="text-align: right;">Subtotal:</td><td style="font-weight: bold;"><span id="quotation-subtotal-value"></span></td></tr>
+                <tr><td colspan="4"></td><td style="text-align: right;">5% VAT:</td><td style="font-weight: bold;"><span id="quotation-vat-value"></span></td></tr>
+                <tr><td colspan="4"></td><td style="text-align: right;">G. Total:</td><td style="font-weight: bold;"><span id="quotation-total-value"></span></td></tr>
             </tfoot>
         </table>
         <div class="notes-section"><label>Notes:</label><textarea></textarea></div>
@@ -94,6 +97,7 @@
         <div class="signatures"><div class="signatory receiver"><div class="signature-space"></div>Receiver Sign & Stamp</div><div class="signatory authorized"><img src="Assets/Sign.jpeg" alt="Authorized Signature">Authorized Signatory</div></div>
         <div class="footer" style="border-color: var(--quotation-green);">+971 (02) 621 9929 | sales@akm-music.com | PO Box 8227, E3-02, Abu Dhabi, UAE</div>
       </div>
+
       <div id="delivery" class="document">
         <div class="header" style="border-color: var(--delivery-orange);">
             <div class="logo"><img src="Assets/Logo.jpg" alt="AKM Music Logo"></div>
@@ -125,7 +129,7 @@
         <div class="signatures"><div class="signatory receiver"><div class="signature-space"></div>Receiver Signatory</div><div class="signatory authorized"><img src="Assets/Sign.jpeg" alt="Authorized Signature">Authorized Signatory</div></div>
         <div class="footer" style="border-color: var(--delivery-orange);">+971 (02) 621 9929 | sales@akm-music.com | PO Box 8227, E3-02, Abu Dhabi, UAE</div>
       </div>
-    </div>
+    </main>
   </div>
   <script src="script.js"></script>
 </body>
