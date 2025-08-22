@@ -6,15 +6,111 @@
     <title>AKM Docs - Welcome</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        body { display: flex; align-items: center; justify-content: center; text-align: center; height: 100vh; }
-        .welcome-container { background: var(--white); padding: 40px 50px; border-radius: 12px; box-shadow: var(--shadow); }
-        .welcome-container h1 { font-size: 32px; margin-bottom: 10px; color: var(--invoice-blue); }
-        .welcome-container p { margin-bottom: 30px; color: #555; }
-        .action-buttons a { display: block; text-decoration: none; }
+        body { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            background: var(--bg-light);
+        }
+        
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .header-bar {
+            width: 100%;
+            background: var(--white);
+            padding: 12px 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        
+        .header-left h1 {
+            margin: 0;
+            color: var(--invoice-blue);
+            font-size: 24px;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .auth-button {
+            padding: 8px 16px;
+            background: var(--button-bg);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .auth-button:hover {
+            background: var(--button-hover);
+        }
+        
+        .user-info {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            color: #555;
+        }
+        
+        .user-email {
+            font-weight: 500;
+        }
+        
+        .sign-out-btn {
+            padding: 6px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .welcome-container { 
+            background: var(--white); 
+            padding: 40px 50px; 
+            border-radius: 12px; 
+            box-shadow: var(--shadow);
+            flex-grow: 1;
+        }
+        
+        .welcome-container h2 { 
+            font-size: 32px; 
+            margin-bottom: 10px; 
+            color: var(--invoice-blue); 
+        }
+        
+        .welcome-container p { 
+            margin-bottom: 30px; 
+            color: #555; 
+        }
+        
+        .action-buttons a { 
+            display: block; 
+            text-decoration: none; 
+            margin-bottom: 15px;
+        }
+        
         .action-buttons button {
             width: 100%;
             padding: 15px;
-            margin-bottom: 15px;
             font-size: 18px;
             font-weight: bold;
             color: var(--white);
@@ -23,21 +119,113 @@
             cursor: pointer;
             transition: transform 0.2s ease;
         }
-        .action-buttons button:hover { transform: scale(1.03); }
-        #btn-invoice { background-color: var(--invoice-blue); }
-        #btn-quotation { background-color: var(--quotation-green); }
-        #btn-delivery { background-color: var(--delivery-orange); }
+        
+        .action-buttons button:hover { 
+            transform: scale(1.03); 
+        }
+        
+        #btn-invoice { 
+            background-color: var(--invoice-blue); 
+        }
+        
+        #btn-quotation { 
+            background-color: var(--quotation-green); 
+        }
+        
+        #btn-delivery { 
+            background-color: var(--delivery-orange); 
+        }
+        
+        .enhanced-features {
+            margin-top: 30px;
+            border-top: 2px solid #eee;
+            padding-top: 25px;
+        }
+        
+        .enhanced-features h3 {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .feature-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .feature-buttons button {
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .feature-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .btn-edit { background-color: #9b59b6; color: white; }
+        .btn-export { background-color: #e74c3c; color: white; }
+        .btn-status { background-color: #f39c12; color: white; }
+        
+        @media (max-width: 768px) {
+            .header-bar {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .feature-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-container {
+                padding: 30px 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="welcome-container">
-        <h1>Welcome to AKM Docs</h1>
-        <p>Your simple solution for creating and managing documents.</p>
-        <div class="action-buttons">
-            <a href="invoice.html"><button id="btn-invoice">Create New Invoice</button></a>
-            <a href="quotation.html"><button id="btn-quotation">Create New Quotation</button></a>
-            <a href="delivery.html"><button id="btn-delivery">Create New Delivery Note</button></a>
+    <div class="app-container">
+        <header class="header-bar">
+            <div class="header-left">
+                <h1>AKM Docs</h1>
+            </div>
+            <div class="header-right">
+                <button id="auth-button" class="auth-button" onclick="handleGoogleSignIn()">Sign In</button>
+                <div id="user-info" class="user-info">
+                    <span class="user-email"></span>
+                    <button class="sign-out-btn" onclick="handleSignOut()">Sign Out</button>
+                </div>
+            </div>
+        </header>
+        
+        <div class="welcome-container">
+            <h2>Welcome to AKM Docs</h2>
+            <p>Your comprehensive solution for creating and managing business documents.</p>
+            
+            <div class="action-buttons">
+                <a href="invoice.html"><button id="btn-invoice">Create New Invoice</button></a>
+                <a href="quotation.html"><button id="btn-quotation">Create New Quotation</button></a>
+                <a href="delivery.html"><button id="btn-delivery">Create New Delivery Note</button></a>
+            </div>
+            
+            <div class="enhanced-features">
+                <h3>Enhanced Features</h3>
+                <div class="feature-buttons">
+                    <button class="btn-edit" onclick="openModal('edit-modal')">Edit Previous Document</button>
+                    <button class="btn-export" onclick="openModal('export-modal')">Export Records</button>
+                    <button class="btn-status" onclick="openModal('status-modal')">Update Status</button>
+                </div>
+            </div>
         </div>
     </div>
+    
+    <script src="script.js"></script>
 </body>
 </html>
