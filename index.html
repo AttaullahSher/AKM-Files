@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AKM Docs - Welcome</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         body { 
             display: flex; 
@@ -197,7 +199,7 @@
                 <h1>AKM Docs</h1>
             </div>
             <div class="header-right">
-                <button id="auth-button" class="auth-button" onclick="handleGoogleSignIn()">Sign In</button>
+                <button id="auth-button" class="auth-button" onclick="handleGoogleSignIn()">Sign In with Google</button>
                 <div id="user-info" class="user-info">
                     <span class="user-email"></span>
                     <button class="sign-out-btn" onclick="handleSignOut()">Sign Out</button>
@@ -227,5 +229,11 @@
     </div>
     
     <script src="script.js"></script>
+    <script>
+        // Initialize authentication when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initGoogleAuth();
+        });
+    </script>
 </body>
 </html>

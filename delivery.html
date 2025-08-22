@@ -3,24 +3,57 @@
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Note Editor</title><link rel="stylesheet" href="styles.css">
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body data-doc-type="delivery">
     <div class="app-container">
-        <header class="header-bar no-print"><div class="header-left"><a href="index.html"><button>Home</button></a></div></header>
+        <header class="header-bar no-print">
+            <div class="header-left"><a href="index.html"><button>Home</button></a></div>
+            <div class="header-right">
+                <button id="auth-button" class="auth-button" onclick="handleGoogleSignIn()">Sign In with Google</button>
+                <div id="user-info" class="user-info" style="display: none;">
+                    <span class="user-email"></span>
+                    <button class="sign-out-btn" onclick="handleSignOut()">Sign Out</button>
+                </div>
+            </div>
+        </header>
         <main class="main-content">
-            <button class="print-btn no-print" title="Save and Print"><img src="Assets/printer-icon.avif" alt="Print"></button>
+            <button class="print-btn no-print" title="Save and Print">Print Document</button>
             <div id="delivery" class="document active">
                  <div class="header"> <div class="logo"><img src="Assets/Logo.jpg" alt="AKM Logo"></div> <div class="company-details"><div class="company-name" style="color: var(--delivery-orange);">AKM MUSIC</div> <div>Ajmal Khan Mohammed Music Centre LLC</div> <div>TRN # 100241997400003</div></div></div>
                  <div class="details"><div class="customer-details"><div><label>Name:</label><input type="text" data-cell="name" value="Purchasing"></div><div><label>Mobile:</label><input type="text" data-cell="mobile"></div><div><label>Add:</label><input type="text" value="Abudhabi UAE" data-cell="add"></div><div><label>TRN:</label><input type="text" data-cell="trn"></div></div><div class="invoice-details"><div><label>DN #:</label><input type="text" id="delivery-number" readonly></div><div><label>Date:</label><input type="date" id="delivery-date"></div><div><label>Ref #:</label><input type="text" id="delivery-ref"></div></div></div>
                  <h2 style="color: var(--delivery-orange);">DELIVERY NOTE</h2>
-                 <table class="items-table"><thead><tr><th>SN</th><th>Model</th><th>Description</th><th>Qty Ordered</th><th>Qty Delivered</th></tr></thead><tbody id="items-body"></tbody><tfoot><tr><td colspan="3" style="text-align: right; font-weight: bold;">Totals:</td><td style="text-align: center; font-weight: bold;"><span id="delivery-ordered-total"></span></td><td style="text-align: center; font-weight: bold;"><span id="delivery-delivered-total"></span></td></tr></tfoot></table>
+                 <table class="items-table"><thead><tr><th>SN</th><th>Model</th><th>Description</th><th>Qty Ordered</th><th>Qty Delivered</th></tr></thead><tbody id="items-body">
+  <tr><td>1</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>2</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>3</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>4</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>5</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>6</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>7</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>8</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>9</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>10</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>11</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>12</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>13</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+  <tr><td>14</td><td><input type="text" data-cell="model"></td><td><input type="text" data-cell="description"></td><td><input type="number" data-cell="qty-ordered"></td><td><input type="number" data-cell="qty-delivered"></td></tr>
+</tbody>
+                 <tfoot><tr><td colspan="3" style="text-align: right; font-weight: bold;">Totals:</td><td style="text-align: center; font-weight: bold;"><span id="delivery-ordered-total"></span></td><td style="text-align: center; font-weight: bold;"><span id="delivery-delivered-total"></span></td></tr></tfoot></table>
                  <div class="notes-section"><label>Notes:</label><textarea aria-label="Notes"></textarea></div>
                  <div class="terms"><strong>Terms:</strong> Please verify items upon delivery. Contact us within 24 hours for discrepancies.</div>
-                 <div class="signatures"><div class="signatory receiver"><div class="signature-space"></div>Receiver Signatory</div><div class="signatory authorized"><img src="Assets/Sign.jpeg" alt="Authorized Signature">Authorized Signatory</div></div>
+                 <div class="signatures"><div class="signatory receiver"><div class="signature-space"></div>Receiver Sign & Stamp</div><div class="signatory authorized"><img src="Assets/Sign.jpeg" alt="Authorized Signature">Authorized Signatory</div></div>
                  <div class="footer">+971 (02) 621 9929 | sales@akm-music.com | PO Box 8227, E3-02, Abu Dhabi, UAE</div>
             </div>
         </main>
     </div>
     <script src="script.js"></script>
+    <script>
+        // Initialize authentication when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initGoogleAuth();
+        });
+    </script>
 </body>
 </html>
