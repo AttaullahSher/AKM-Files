@@ -1,0 +1,116 @@
+:root {
+  --invoice-blue: #1E90FF;
+  --quotation-green: #2ECC71;
+  --delivery-orange: #E67E22;
+  --grey-border: #e0e0e0;
+  --button-bg: #2E2E2E;
+  --button-hover: #4A4A4A;
+  --shadow: 0 4px 12px rgba(0,0,0,0.1);
+  --bg-light: #F9FAFB;
+  --white: #FFFFFF;
+  --footer-border: #333333;
+}
+/* The rest of your CSS code goes here... */
+/* (Please paste the full CSS you provided in your last message) */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif, system-ui;
+  background: var(--bg-light);
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.4;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.header-bar {
+  width: 100%;
+  background: var(--white);
+  padding: 8px 12px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-left, .header-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.header-left input, .header-left button, .header-right input, .header-right button {
+  padding: 8px 16px;
+  height: 40px;
+  background: var(--button-bg);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.header-bar button:hover {
+  background: var(--button-hover);
+  transform: scale(1.05);
+}
+
+.header-bar button:active {
+  transform: scale(0.95);
+}
+
+.doc-tab.active-tab#tab-invoice {
+  background: var(--invoice-blue);
+}
+
+.doc-tab.active-tab#tab-quotation {
+  background: var(--quotation-green);
+}
+
+.doc-tab.active-tab#tab-delivery {
+  background: var(--delivery-orange);
+}
+
+.main-content {
+  flex-grow: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.document {
+  width: 210mm;
+  height: 297mm;
+  background: var(--white);
+  padding: 6mm;
+  margin-top: 10mm;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  position: relative;
+  margin: 0 auto;
+  display: none;
+  overflow: hidden;
+}
+/* ...and so on... paste your full CSS here */
