@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+</head>
+<body>
+    <h1>CORS Test for Google Apps Script</h1>
+    <button onclick="testCORS()">Test CORS Connection</button>
+    <div id="result" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;"></div>
+
+    <script>
+        const WEB_APP_URL = 'https://script.google.com/a/macros/akm-music.com/s/AKfycbwZHuhkk8-llpul4ybaCnxvl_EdRcoeaHoxwrELZu53zBWV_wY2--YsPWCrENMKMC3kJg/exec';
+
+        async function testCORS() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing CORS connection...';
+            
+            try {
+                // Test GET request
+                const response = await fetch(`${WEB_APP_URL}?action=getCustomers`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <div style="color: green;">
+                        ✅ CORS test successful!<br>
+                        Status: ${data.status}<br>
+                        Message: ${data.message}<br>
+                        Customers found: ${data.customers ? data.customers.length : 0}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div style="color: red;">
+                        ❌ CORS test failed!<br>
+                        Error: ${error.message}<br>
+                        ${error.name === 'TypeError' && error.message.includes('Failed to fetch') 
+                            ? 'This indicates a network or CORS issue. Make sure the Google Apps Script is deployed and CORS headers are properly set.'
+                            : ''}
+                    </div>
+                `;
+                console.error('CORS test error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

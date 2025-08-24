@@ -32,16 +32,34 @@ function debounceSave(docType) {
     saveTimeout = setTimeout(() => saveDocument(docType, true), 2000);
 }
 
-// Fetch customers from backend
+// Fetch customers from backend with CORS handling
 async function fetchCustomers() {
     try {
-        const response = await fetch(`${WEB_APP_URL}?action=getCustomers`);
+        const response = await fetch(`${WEB_APP_URL}?action=getCustomers`, {
+            mode: 'cors',
+            credentials: 'omit'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         if (data.status === 'success') {
             customers = data.customers;
         }
     } catch (error) {
         console.error('Error fetching customers:', error);
+        // Fallback: Try to load from localStorage if available
+        try {
+            const savedCustomers = localStorage.getItem('akm_customers');
+            if (savedCustomers) {
+                customers = JSON.parse(savedCustomers);
+                console.log('Loaded customers from localStorage fallback');
+            }
+        } catch (fallbackError) {
+            console.error('Fallback also failed:', fallbackError);
+        }
     }
 }
 
@@ -225,6 +243,11 @@ async function saveDocument(docType, isAutoSave = false) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(docData)
+        }).catch(error => {
+            if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+                throw new Error('Network error: Cannot connect to server. Please check your internet connection and try again.');
+            }
+            throw error;
         });
 
         const data = await response.json();
@@ -368,7 +391,7 @@ function initGoogleAuth() {
 function initializeGoogleAuth() {
     try {
         googleTokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with your actual client ID
+            client_id: '668706603480-6lp9l2p8mjtnhde466diflq75d0fui8q.apps.googleusercontent.com',
             scope: 'https://www.googleapis.com/auth/userinfo.email',
             callback: handleCredentialResponse,
         });

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKM Auth Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        button { padding: 10px 20px; font-size: 16px; margin: 10px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>AKM Authentication Test</h1>
+    <button onclick="testAuth()">Test Google OAuth</button>
+    <div id="result"></div>
+
+    <script>
+        let googleTokenClient;
+        
+        function initGoogleAuth() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                initializeGoogleAuth();
+            } else {
+                const script = document.createElement('script');
+                script.src = 'https://accounts.google.com/gsi/client';
+                script.async = true;
+                script.defer = true;
+                script.onload = initializeGoogleAuth;
+                document.head.appendChild(script);
+            }
+        }
+
+        function initializeGoogleAuth() {
+            try {
+                googleTokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: '668706603480-6lp9l2p8mjtnhde466diflq75d0fui8q.apps.googleusercontent.com',
+                    scope: 'https://www.googleapis.com/auth/userinfo.email',
+                    callback: handleCredentialResponse,
+                });
+                document.getElementById('result').innerHTML = '<p class="success">✅ Google Auth initialized successfully!</p>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<p class="error">❌ Auth initialization failed: ' + error.message + '</p>';
+            }
+        }
+
+        function testAuth() {
+            if (!googleTokenClient) {
+                document.getElementById('result').innerHTML = '<p class="error">❌ Auth not initialized yet</p>';
+                return;
+            }
+            
+            try {
+                googleTokenClient.requestAccessToken();
+                document.getElementById('result').innerHTML = '<p>🔄 Opening Google login...</p>';
+            } catch (error) {
+                document.getElementById('result').innerHTML = '<p class="error">❌ Auth request failed: ' + error.message + '</p>';
+            }
+        }
+
+        function handleCredentialResponse(tokenResponse) {
+            if (tokenResponse && tokenResponse.access_token) {
+                document.getElementById('result').innerHTML = '<p class="success">✅ Success! Token received: ' + 
+                    tokenResponse.access_token.substring(0, 20) + '...</p>';
+                
+                // Test getting user info
+                verifyGoogleToken(tokenResponse.access_token);
+            } else {
+                document.getElementById('result').innerHTML = '<p class="error">❌ No token received</p>';
+            }
+        }
+
+        async function verifyGoogleToken(accessToken) {
+            try {
+                const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { 'Authorization': `Bearer ${accessToken}` }
+                });
+                
+                if (response.ok) {
+                    const userInfo = await response.json();
+                    document.getElementById('result').innerHTML += 
+                        '<p class="success">✅ User: ' + userInfo.email + '</p>' +
+                        '<p class="success">✅ Domain check: ' + (userInfo.email.endsWith('@akm-music.com') ? 'PASS' : 'FAIL') + '</p>';
+                } else {
+                    document.getElementById('result').innerHTML += '<p class="error">❌ User info failed: ' + response.status + '</p>';
+                }
+            } catch (error) {
+                document.getElementById('result').innerHTML += '<p class="error">❌ Verification error: ' + error.message + '</p>';
+            }
+        }
+
+        // Initialize on load
+        window.onload = initGoogleAuth;
+    </script>
+</body>
+</html>
