@@ -17,4 +17,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.DIRECT_DEPLOY_FIREBASE }}
           channelId: live
-          projectId: akm-create
+          projectId: akm-files
