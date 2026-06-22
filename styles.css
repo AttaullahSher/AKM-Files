@@ -521,6 +521,217 @@ body {
 }
 
 /* =========================
+   ICON ACTION BUTTONS (Print / PDF)
+   ========================= */
+.action-icons {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  gap: 10px;
+}
+
+.icon-btn {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.icon-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.icon-btn.btn-print {
+  background: linear-gradient(135deg, #2E2E2E 0%, #4A4A4A 100%);
+}
+
+.icon-btn.btn-pdf {
+  background: linear-gradient(135deg, #C0392B 0%, #E74C3C 100%);
+}
+
+.icon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.icon-btn:active {
+  transform: translateY(0);
+}
+
+.icon-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================
+   PAYMENT RECEIPT (half A4)
+   ========================= */
+.receipt-doc {
+  width: 210mm;
+  min-height: 148.5mm;            /* top half of an A4 page */
+  margin: 24px auto;
+  background: var(--white);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 16mm 16mm 10mm 16mm;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 2px dashed #bbb; /* cut line: keep the lower half empty */
+}
+
+.receipt-doc .doc-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: var(--invoice-blue);
+  margin: 6px 0 18px 0;
+}
+
+.receipt-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+  font-size: 14px;
+}
+
+.receipt-meta .field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.receipt-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.receipt-row > label {
+  font-weight: bold;
+  color: #555;
+  white-space: nowrap;
+}
+
+.receipt-row .fill {
+  flex: 1;
+  border: none;
+  border-bottom: 1px solid #999;
+  padding: 4px 6px;
+  font-size: 15px;
+  font-family: inherit;
+  background: transparent;
+}
+
+.receipt-row .fill:focus {
+  outline: none;
+  border-bottom-color: var(--invoice-blue);
+}
+
+.receipt-amount-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid var(--invoice-blue);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-weight: bold;
+  font-size: 18px;
+  color: var(--invoice-blue);
+}
+
+.receipt-amount-box input {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  font-weight: bold;
+  color: var(--invoice-blue);
+  width: 140px;
+  font-family: inherit;
+}
+
+.receipt-amount-box input:focus { outline: none; }
+
+.receipt-words {
+  font-style: italic;
+  color: #555;
+  font-size: 14px;
+  margin: 10px 0 18px 0;
+  min-height: 18px;
+}
+
+.receipt-purpose .fill {
+  border-bottom: 1px solid #999;
+}
+
+.receipt-sign {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 28px;
+}
+
+.receipt-sign .signatory img {
+  width: 170px;
+  height: 70px;
+  object-fit: contain;
+  border-bottom: 1px solid #999;
+}
+
+.receipt-doc .footer {
+  margin-top: 18px;
+}
+
+@media (max-width: 1024px) {
+  .receipt-doc {
+    width: 100%;
+    max-width: 210mm;
+    margin: 12px auto;
+    padding: 16px;
+  }
+}
+
+@media print {
+  .receipt-doc {
+    width: 210mm !important;
+    min-height: 148.5mm !important;
+    margin: 0 !important;
+    padding: 12mm 14mm !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    border-bottom: 1px dashed #999 !important;
+    overflow: visible !important;
+  }
+
+  .receipt-doc input {
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+
+  .receipt-amount-box,
+  .receipt-amount-box input {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* =========================
    UTILITY
    ========================= */
 .text-center { text-align: center; }
